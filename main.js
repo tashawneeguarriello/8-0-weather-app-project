@@ -7,13 +7,28 @@ document.querySelector("form").addEventListener("submit", (event) => {
   fetch(url)
     .then((response) => response.json())
     .then((forecast) => {
-      const display = document.querySelector(".display");
-      display.innerHTML = `
-                <h2>${forecast.nearest_area[0].areaName[0].value}</h2>
-                <p><strong>Area: </strong>${forecast.nearest_area[0].region[0].value}<p>
-                <p><strong>Region: </strong>${forecast.nearest_area[0].region.value}</p>
-                <p><strong>Country: </strong>${forecast.nearest_area[0].country[0].value}</p>
-                <p><strong>Currently: </strong>${forecast.current_condition[0].FeelsLikeF}°</p>
-                `;
+      const feelsLike = forecast.current_condition[0].FeelsLikeF;
+      helper(forecast);
+      const ul = document.querySelector("#previous");
+      if (ul.firstElementChild.textContent === "No previous searches.") {
+        ul.firstElementChild.remove();
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="#">${userInput}</a> - ${feelsLike}°F`;
+
+        li.addEventListener("click", (event) => {
+          event.preventDefault();
+          helper(forecast);
+        });
+        ul.append(li);
+      } else {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="#">${userInput}</a> - ${feelsLike}°F`;
+        li.addEventListener("click", (event) => {
+          event.preventDefault();
+          helper(forecast);
+        });
+        ul.append(li);
+      }
+      event.target.reset();
     });
 });
